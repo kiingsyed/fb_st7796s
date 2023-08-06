@@ -103,7 +103,7 @@ static uint8_t madctrl_data;
 
 static uint8_t initCtr;
 
-static void initregs(struct fbtft_par *par) {
+static void initRegs(struct fbtft_par *par) {
 	write_reg(par, ST7796S_SLPOUT);
 	mdelay(20);
 
@@ -192,7 +192,7 @@ static int init_display(struct fbtft_par *par)
 	write_reg(par, ST7796S_SWRESET);
 	mdelay(100);
 
-	initregs(par);
+	initRegs(par);
 
 	return 0;
 }

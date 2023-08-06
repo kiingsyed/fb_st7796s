@@ -104,6 +104,12 @@ static uint8_t madctrl_data;
 static uint8_t initCtr;
 
 static void init_regs(struct fbtft_par *par) {
+
+	//test if reinit is really called periodically
+	write_reg(par, ST7796S_SWRESET);
+	mdelay(100);
+
+
 	write_reg(par, ST7796S_SLPOUT);
 	mdelay(20);
 
@@ -144,18 +150,9 @@ void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned 
 	}
 
 	(*update_display)(par, start_line, end_line);
-}
+}	write_reg(par, ST7796S_SWRESET);
+	mdelay(100);
 
-/**
- * init_display() - initialize the display controller
- */
-
-static int init_display(struct fbtft_par *par)
-{
-	//set hook
-	if (my_update_display != par->fbtftops.update_display) {
-		update_display = par->fbtftops.update_display;
-		par->fbtftops.update_display = my_update_display;
 	}
 	initCtr = 0;
 

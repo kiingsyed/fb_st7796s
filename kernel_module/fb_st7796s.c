@@ -98,24 +98,12 @@
 #define TFT_ROTATE_180            (ST7796S_MADCTL_MV | ST7796S_MADCTL_MX | ST7796S_MADCTL_MY)
 #define TFT_ROTATE_270            (ST7796S_MADCTL_MY)
 
-static void initregs();
 static void (*update_display)(struct fbtft_par *par, unsigned int start_line, unsigned int end_line);
 static uint8_t madctrl_data;
 
 static uint8_t initCtr;
 
-void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned int end_line) {
-	//jump to updater
-	initCtr++;
-	if (initCtr > 50) {
-		initCtr = 0;
-		initRegs();
-	}
-
-	*update_display(par, start_line, end_line);
-}
-
-static void initregs() {
+static void initregs(struct fbtft_par *par) {
 	write_reg(par, ST7796S_SLPOUT);
 	mdelay(20);
 
@@ -145,6 +133,17 @@ static void initregs() {
 	write_reg(par, ST7796S_CSCON, 0x003C);
 	write_reg(par, ST7796S_CSCON, 0x0069);
 	write_reg(par, ST7796S_DISPON);
+}
+
+void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned int end_line) {
+	//jump to updater
+	initCtr++;
+	if (initCtr > 50) {
+		initCtr = 0;
+		initRegs(par);
+	}
+
+	*update_display(par, start_line, end_line);
 }
 
 /**
@@ -193,7 +192,7 @@ static int init_display(struct fbtft_par *par)
 	write_reg(par, ST7796S_SWRESET);
 	mdelay(100);
 
-	initregs();
+	initregs(par);
 
 	return 0;
 }

@@ -144,7 +144,7 @@ static void init_regs(struct fbtft_par *par) {
 void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned int end_line) {
 	//jump to updater
 	initCtr++;
-	if (initCtr > 50) {
+	if (initCtr > 5) {
 		initCtr = 0;
 		init_regs(par);
 	}

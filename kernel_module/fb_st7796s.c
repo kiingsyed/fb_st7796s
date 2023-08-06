@@ -103,7 +103,7 @@ static uint8_t madctrl_data;
 
 static uint8_t initCtr;
 
-static void initRegs(struct fbtft_par *par) {
+static void init_regs(struct fbtft_par *par) {
 	write_reg(par, ST7796S_SLPOUT);
 	mdelay(20);
 
@@ -140,10 +140,10 @@ void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned 
 	initCtr++;
 	if (initCtr > 50) {
 		initCtr = 0;
-		initRegs(par);
+		init_regs(par);
 	}
 
-	*update_display(par, start_line, end_line);
+	(*update_display)(par, start_line, end_line);
 }
 
 /**
@@ -192,7 +192,7 @@ static int init_display(struct fbtft_par *par)
 	write_reg(par, ST7796S_SWRESET);
 	mdelay(100);
 
-	initRegs(par);
+	init_regs(par);
 
 	return 0;
 }

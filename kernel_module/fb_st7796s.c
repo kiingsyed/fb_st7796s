@@ -106,8 +106,8 @@ static uint8_t initCtr;
 static void init_regs(struct fbtft_par *par) {
 
 	//test if reinit is really called periodically
-	write_reg(par, ST7796S_SWRESET);
-	mdelay(100);
+	//write_reg(par, ST7796S_SWRESET);
+	//mdelay(100);
 
 
 	write_reg(par, ST7796S_SLPOUT);

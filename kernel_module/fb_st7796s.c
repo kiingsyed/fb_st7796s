@@ -125,7 +125,7 @@ static void init_regs(struct fbtft_par *par, int slpout) {
 
 
 	write_reg(par, ST7796S_MADCTL, madctrl_data);
-	write_reg(par, ST7796S_INVON);
+	write_reg(par, ST7796S_INVOFF);
 
 	write_reg(par, ST7796S_COLMOD, 0x0055);
 

@@ -153,7 +153,7 @@ void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned 
 
 	initCtr++;
 
-	init_regs(par, (intCtr > 5) ? INIT_SLPOUT : INIT_KEEPALIVE);
+	init_regs(par, (initCtr > 5) ? INIT_SLPOUT : INIT_KEEPALIVE);
 
 	if (initCtr > 5) {
 		initCtr = 0;

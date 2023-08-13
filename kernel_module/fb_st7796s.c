@@ -98,20 +98,26 @@
 #define TFT_ROTATE_180            (ST7796S_MADCTL_MV | ST7796S_MADCTL_MX | ST7796S_MADCTL_MY)
 #define TFT_ROTATE_270            (ST7796S_MADCTL_MY)
 
+#define INIT_RESET	(2)
+#define INIT_SLPOUT (1)
+#define INIT_KEEPALIVE (0)
+
 static void (*update_display)(struct fbtft_par *par, unsigned int start_line, unsigned int end_line);
 static uint8_t madctrl_data;
 
 static uint8_t initCtr;
 
-static void init_regs(struct fbtft_par *par) {
+static void init_regs(struct fbtft_par *par, int slpout) {
 
-	//test if reinit is really called periodically
-	//write_reg(par, ST7796S_SWRESET);
-	//mdelay(100);
+	if (slpout & INIT_RESET) {
+		write_reg(par, ST7796S_SWRESET);
+		mdelay(100);
+	}
 
-
-	write_reg(par, ST7796S_SLPOUT);
-	mdelay(20);
+	if (slpout & INIT_SLPOUT) {
+		write_reg(par, ST7796S_SLPOUT);
+		mdelay(5);
+	}
 
 
 	write_reg(par, ST7796S_CSCON, 0x00C3);  
@@ -144,11 +150,13 @@ static void init_regs(struct fbtft_par *par) {
 }
 
 void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned int end_line) {
-	//jump to updater
+
 	initCtr++;
+
+	init_regs(par, (intCtr > 5) ? INIT_SLPOUT : INIT_KEEPALIVE);
+
 	if (initCtr > 5) {
 		initCtr = 0;
-		init_regs(par);
 	}
 
 	(*update_display)(par, start_line, end_line);
@@ -197,10 +205,7 @@ static int init_display(struct fbtft_par *par)
 
 	pr_info("ST7796 MADCTRL: 0x%0X",madctrl_data);
 
-	write_reg(par, ST7796S_SWRESET);
-	mdelay(100);
-
-	init_regs(par);
+	init_regs(par, INIT_SLPOUT | INIT_KEEPALIVE);
 
 	return 0;
 }

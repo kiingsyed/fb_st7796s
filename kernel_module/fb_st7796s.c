@@ -157,6 +157,8 @@ void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned 
 
 	if (initCtr > 5) {
 		initCtr = 0;
+		start_line = 0;
+		end_line = par->info->var.yres - 1;
 	}
 
 	(*update_display)(par, start_line, end_line);

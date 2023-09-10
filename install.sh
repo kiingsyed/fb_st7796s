@@ -27,7 +27,7 @@ echo "$UN" | grep 5.10.76-sun50iw6 && LHEADERS=linux-headers-current-sun50iw6
 
 [ ! -z "$LHEADERS" ] || die "Unknown kernel architecture"
 
-sudo apt update
+#sudo apt update
 sudo apt install git build-essential $LHEADERS || die "Error while installing packages"
 
 cd $SPATH

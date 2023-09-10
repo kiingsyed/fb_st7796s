@@ -98,26 +98,87 @@
 #define TFT_ROTATE_180            (ST7796S_MADCTL_MV | ST7796S_MADCTL_MX | ST7796S_MADCTL_MY)
 #define TFT_ROTATE_270            (ST7796S_MADCTL_MY)
 
+#define INIT_RESET	(2)
+#define INIT_SLPOUT (1)
+#define INIT_KEEPALIVE (0)
+
+static void (*update_display)(struct fbtft_par *par, unsigned int start_line, unsigned int end_line);
+static uint8_t madctrl_data;
+
+static uint8_t initCtr;
+
+static void init_regs(struct fbtft_par *par, int slpout) {
+
+	if (slpout & INIT_RESET) {
+		write_reg(par, ST7796S_SWRESET);
+		mdelay(100);
+	}
+
+	if (slpout & INIT_SLPOUT) {
+		write_reg(par, ST7796S_SLPOUT);
+		mdelay(5);
+	}
+
+
+	write_reg(par, ST7796S_CSCON, 0x00C3);  
+	write_reg(par, ST7796S_CSCON, 0x0096);  
+
+
+	write_reg(par, ST7796S_MADCTL, madctrl_data);
+	write_reg(par, ST7796S_INVOFF);
+
+	write_reg(par, ST7796S_COLMOD, 0x0055);
+
+	write_reg(par, ST7796S_DIC, 0x0001);  
+	write_reg(par, ST7796S_EM, 0x00C6);
+
+	write_reg(par, ST7796S_PWR2, 0x0015);
+	write_reg(par, ST7796S_PWR3, 0x00AF);
+	write_reg(par, ST7796S_VCMPCTL, 0x0022);
+	write_reg(par, ST7796S_VCMOST, 0x0000);
+	write_reg(par, ST7796S_DOCA, 0x0040, 0x008A, 0x0000, 0x0000, 0x0029, 0x0019, 0x00A5, 0x0033);
+
+	write_reg(par, ST7796S_PGC, 0x00F0, 0x0004, 0x0008, 0x0009, 0x0008, 0x0015, 0x002F, 0x0042, 0x0046, 0x0028, 0x0015, 0x0016, 0x0029, 0x002D);
+	write_reg(par, ST7796S_NGC, 0x00F0, 0x0004, 0x0009, 0x0009, 0x0008, 0x0015, 0x002E, 0x0046, 0x0046, 0x0028, 0x0015, 0x0015, 0x0029, 0x002D);
+
+	write_reg(par, ST7796S_NORON);
+
+	write_reg(par, ST7796S_WRCTRLD, 0x0024);
+	write_reg(par, ST7796S_CSCON, 0x003C);
+	write_reg(par, ST7796S_CSCON, 0x0069);
+	write_reg(par, ST7796S_DISPON);
+}
+
+void my_update_display(struct fbtft_par *par, unsigned int start_line, unsigned int end_line) {
+
+	initCtr++;
+
+	init_regs(par, (initCtr > 5) ? INIT_SLPOUT : INIT_KEEPALIVE);
+
+	if (initCtr > 5) {
+		initCtr = 0;
+		start_line = 0;
+		end_line = par->info->var.yres - 1;
+	}
+
+	(*update_display)(par, start_line, end_line);
+}
+
 /**
  * init_display() - initialize the display controller
  */
 
 static int init_display(struct fbtft_par *par)
 {
-	uint8_t madctrl_data;
-	
+	//set hook
+	if (my_update_display != par->fbtftops.update_display) {
+		update_display = par->fbtftops.update_display;
+		par->fbtftops.update_display = my_update_display;
+	}
+	initCtr = 0;
+
 	pr_info("ST7796 driver: load");
 	pr_info("ST7796 Rotation: %d",par->pdata->rotate);
-
-	write_reg(par, ST7796S_SWRESET);
-	mdelay(100);
-
-	write_reg(par, ST7796S_SLPOUT);
-	mdelay(20);
-
-	write_reg(par, ST7796S_CSCON, 0x00C3);  
-	write_reg(par, ST7796S_CSCON, 0x0096);  
-
 
 	switch (par->pdata->rotate)
 	{
@@ -143,30 +204,10 @@ static int init_display(struct fbtft_par *par)
 	}
 
 	madctrl_data |= ST7796S_COLOR;
-	
+
 	pr_info("ST7796 MADCTRL: 0x%0X",madctrl_data);
 
-	write_reg(par, ST7796S_MADCTL, madctrl_data);
-	write_reg(par, ST7796S_COLMOD, 0x0055);
-
-	write_reg(par, ST7796S_DIC, 0x0001);  
-	write_reg(par, ST7796S_EM, 0x00C6);
-
-	write_reg(par, ST7796S_PWR2, 0x0015);
-	write_reg(par, ST7796S_PWR3, 0x00AF);
-	write_reg(par, ST7796S_VCMPCTL, 0x0022);
-	write_reg(par, ST7796S_VCMOST, 0x0000);
-	write_reg(par, ST7796S_DOCA, 0x0040, 0x008A, 0x0000, 0x0000, 0x0029, 0x0019, 0x00A5, 0x0033);
-
-	write_reg(par, ST7796S_PGC, 0x00F0, 0x0004, 0x0008, 0x0009, 0x0008, 0x0015, 0x002F, 0x0042, 0x0046, 0x0028, 0x0015, 0x0016, 0x0029, 0x002D);
-	write_reg(par, ST7796S_NGC, 0x00F0, 0x0004, 0x0009, 0x0009, 0x0008, 0x0015, 0x002E, 0x0046, 0x0046, 0x0028, 0x0015, 0x0015, 0x0029, 0x002D);
-
-	write_reg(par, ST7796S_NORON);
-
-	write_reg(par, ST7796S_WRCTRLD, 0x0024);
-	write_reg(par, ST7796S_CSCON, 0x003C);
-	write_reg(par, ST7796S_CSCON, 0x0069);
-	write_reg(par, ST7796S_DISPON);
+	init_regs(par, INIT_SLPOUT | INIT_KEEPALIVE);
 
 	return 0;
 }

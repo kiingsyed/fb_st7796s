@@ -20,6 +20,6 @@ sudo rm /etc/X11/xorg.conf.d/52*
 
 sudo rm /boot/overlay-user/sun50i-h6-st7796s.dtbo
 
-sudo sed -i -e 's/sun50i-h6-st7796s//' /boot/$orangepiEnv.txt
+sudo sed -i -e 's/sun50i-h6-st7796s//' /boot/$sbcEnv
 
 

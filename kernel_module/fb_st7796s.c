@@ -5,7 +5,12 @@
 #include <linux/module.h>
 #include <video/mipi_display.h>
 
+#include <linux/version.h>
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(6,0,0)
 #include "fbtft.h"
+#else
+#include "fbtft-6.0.h"
+#endif
 
 #define DRVNAME "fb_st7796s"
 

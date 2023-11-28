@@ -11,8 +11,8 @@
             num-cs = <2>;
 
                 /* CS0 = PH5 CS1 = PH9 */
-                cs-gpios = <&pio 7 5 0>,
-                           <&pio 7 9 0>;
+                cs-gpios = <&pio 7 5 0>; /*,*/
+                           /*<&pio 7 9 0>;*/
             status = "okay";
             #address-cells = <1>;
             #size-cells = <0>;

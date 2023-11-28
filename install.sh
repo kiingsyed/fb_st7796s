@@ -45,7 +45,7 @@ if echo "$UN" | grep -q sun50iw9; then
     OVL=orangepi-add-overlay
     TOUCHDOG_INSTALL_SCRIPT=touchdog-install-h618.sh
     if echo "$UN" | grep -q 6.1.31-sun50iw9; then
-        LHEADERS=linux-headers-next-sun50iw9
+        LHEADERS=/opt/linux-headers*.deb
     fi
 fi
 

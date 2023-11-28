@@ -13,11 +13,12 @@ die() { echo "$*" 1>&2 ; exit 1; }
 SCRIPT=$(realpath "$0")
 SPATH=$(dirname "$SCRIPT")
 
-echo "Checking if KlipperScreen service is installed..."
-if ! systemctl is-active --quiet KlipperScreen.service; then
-    read -p "KlipperScreen service is not installed. Do you still want to continue? (y/n): " -r
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        die "Script aborted by user."
+KLIPPER_SCREEN_INSTALLED=$(systemctl list-units --full -all | grep -o 'KlipperScreen\.service')
+
+if [ -z "$KLIPPER_SCREEN_INSTALLED" ]; then
+    read -p "KlipperScreen service is not installed. Continue script execution? (y/n): " CONTINUE
+    if [ "$CONTINUE" != "y" ]; then
+        die "Script execution aborted by user."
     fi
 fi
 
@@ -52,7 +53,7 @@ fi
 [ ! -z "$LHEADERS" ] || die "Unknown kernel architecture"
 
 #sudo apt update
-sudo apt install git build-essential $LHEADERS || die "Error while installing packages"
+sudo apt install git build-essential $LHEADERS -y || die "Error while installing packages"
 
 cd "$SPATH"
 

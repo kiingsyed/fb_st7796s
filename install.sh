@@ -99,8 +99,10 @@ cd "$SPATH/touchdog"
 
 
 if [ "$TOUCHDOG_INSTALL_SCRIPT" ]; then
+    cd $SPATH/touchdog
     source "./$TOUCHDOG_INSTALL_SCRIPT"
 else
+    cd $SPATH/touchdog
     source ./touchdog-install.sh
 fi
 

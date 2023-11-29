@@ -56,7 +56,7 @@ fb_st7796s/uninstall.sh
 | EXP1_7  | TFT_CS    | PH5  | 24  | Выборка шины TFT                       |
 | EXP1_8  | D/C       | PL3  | 40  | Выборка данных/команд на шине TFT      |
 | EXP1_9  | GND       | GND  | 06  | Общий (питание)                        |
-| EXP1_10 | +5V       | +5V  | 05  | Питание дисплея                        |
+| EXP1_10 | +5V       | +5V  | 02  | Питание дисплея                        |
 | EXP2_1  | MISO      | PH8  | 21  | Линия MISO шины SPI                    |
 | EXP2_2  | CLK       | PH6  | 23  | Линия SCK шины SPI                     |
 | EXP2_6  | MOSI      | PH7  | 19  | Линия MISO шины SPI                    |
